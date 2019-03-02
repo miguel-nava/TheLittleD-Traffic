@@ -2,12 +2,13 @@ import urllib.request
 import re
 from bs4 import BeautifulSoup
 from datetime import datetime
-
+import json
 
 class Events:
     def __init__(self):
         self.soup = self.getSoup()
         self.events = self.getEvents(self.soup)
+        self.json = self.getJSON(self.events)
 
     def getSoup(self):
         url = 'http://www.americanairlinescenter.com/events'
@@ -36,3 +37,16 @@ class Events:
             dt = datetime.strptime(' '.join([date, time]), '%b %d, %Y %I:%M%p')
             events.append((event, dt))
         return events
+
+    def getJSON(self, events):
+        dictionary = {}
+        for e in events:
+            date = e[1].strftime('%m-%d-%Y')
+            time = e[1].strftime('%H:%M:%S')
+            event = e[0]
+            dictionary[str(date)] = {
+                'date': date,
+                'time': time,
+                'event': event
+            }
+        return json.dumps(dictionary)

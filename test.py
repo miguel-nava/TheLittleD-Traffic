@@ -1,3 +1,3 @@
 from scraper import Events
 
-print(Events().events)
+print(Events().json)
