@@ -18,47 +18,18 @@
 
 <body>
     <center>
-    <h1>Have Something to Say?</h1>
-    <h2>Get in contact with your local representative(s).</h2>
+    <h1>Want to be included?</h1>
 </center>
     <br>
     <br>
     <center>
     <form action="/reps" method="post" enctype="multipart/form-data" >
         <div class="form-inline">
-            <input type="text" class="form-control" id="inputdefault" name="location"  placeholder="Enter Your Location">
+                <input type="text" class="form-control" id="inputdefault" name="fname"  placeholder="Enter Your Name">
+            <input type="text" class="form-control" id="inputdefault" name="pnumber"  placeholder="Enter Your Number">
             <button type="submit" id="btnsubmit" class="btn btn-default">Submit</button>
         </div>
     </form>
-    <br>
-    <hr>
-    {% if reps %}
-        <table class="table table-dark">
-        <tr>
-            <th>Name</th>
-            <th>Role</th>
-            <th>Website</th>
-            <th>Phone Number</th>
-        </tr>
-        {% for person in reps %} 
-            <tr>
-                <td>{{person.name}}</td>        
-                <td>{{person.party}}</td>
-                <td><a href='{{person.website}}' target="_blanks"> {{person.website}}</a></td>
-                <td>{{person.phone}} (<a href="">Send Text</a>)</td>
-            </tr>
-        {% endfor %}
-    </table>
-    {% endif %}
-    {% if map %}
-        <iframe
-            width="600"
-            height="450"
-            frameborder="0" style="border:0"
-            src= {{map}} allowfullscreen>
-        </iframe>
-    {% endif %}
-    </center>
 </body>
 
 </html>
