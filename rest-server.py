@@ -13,6 +13,7 @@ import sys
 import csv
 import requests 
 import json
+import scraper
 app = Flask(__name__, static_url_path="")
 
 
@@ -39,6 +40,10 @@ get_data = "SELECT * FROM contactpeeps"
 def getHome():
     return render_template('index.html')
 
+@app.route('/updateEvents')
+def getEvents():
+    with open('events.json') as f:
+        f.write(scraper.Events().json)
 
 @app.route('/miguel')
 def miguel():
