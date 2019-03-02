@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<style>
+
+  html, body, div, span, applet, object, iframe,
+  h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+  a, abbr, acronym, address, big, cite, code,
+  del, dfn, em, img, ins, kbd, q, s, samp,
+  small, strike, strong, sub, sup, tt, var,
+  b, u, i,
+  dl, dt, dd, ol, ul, li,
+  fieldset, form, label, legend,
+  table, caption, tbody, tfoot, thead, tr, th, td,
+  article, aside, canvas, details, embed, 
+  figure, figcaption, footer, header, hgroup, 
+  menu, nav, output, ruby, section, summary,
+  time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font: inherit;
+    font-size: 100%;
+    vertical-align: baseline;
+     font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+     font-weight: inherit;
+     background:black;
+  }
+
+  h1 {
+    font-size:3em;
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+    font-weight: 600;
+    text-align: left;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    color:ghostwhite;
+  }
+  h2 {
+    font-size: 12px;
+    font-style: italic;
+    color: gray;
+    margin-top:5px;
+    margin-bottom:5px;
+  }
+  #everything{
+    width:600px;
+    margin:20px;
+  }
+  #chart{
+    width:600px;
+    height:600px;
+  }
+  .bar{
+    fill:#032c64;
+  }
+  text.label{
+    fill: ghostwhite;
+    color: ghostwhite;
+    font-size: 15px;
+    font-weight: bold;
+  }
+  text.category{
+    fill: ghostwhite;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  hr{
+    color: ghostwhite;
+    background-color: ghostwhite;
+    height: 5px;
+  }
+
+</style>
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.1.0/topojson.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+</head>
+<center>
+  <body>
+
+  <div id="everything">
+    <h1 style="margin-top:25px; text-align: center;">Gun Related Deaths related to Mass Shootings by State Since 2014</h1>
+    <hr>
+    <div id="chart" style="margin-top:25px"></div>
+    <h2>Source: Kaggle.com</h2>
+  </div>
+
+  <script>
+
+//updatingBarChart.js
+counter = 0
+var setup = function(targetID){
+  //Set size of svg element and chart
+  var margin = {top: 0, right: 0, bottom: 0, left: 0},
+    width = 600 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom,
+    categoryIndent = 4*15 + 5,
+    defaultBarWidth = 2000;
+
+  //Set up scales
+  var x = d3.scale.linear()
+    .domain([0,defaultBarWidth])
+    .range([0,width]);
+  var y = d3.scale.ordinal()
+    .rangeRoundBands([0, height], 0.1, 0);
+
+  //Create SVG element
+  d3.select(targetID).selectAll("svg").remove()
+  var svg = d3.select(targetID).append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  
+  //Package and export settings
+  var settings = {
+    margin:margin, width:width, height:height, categoryIndent:categoryIndent,
+    svg:svg, x:x, y:y
+  }
+  return settings;
+}
+
+var redrawChart = function(targetID, newdata) {
+  var margin=settings.margin, width=settings.width, height=settings.height, categoryIndent=settings.categoryIndent, 
+  svg=settings.svg, x=settings.x, y=settings.y;
+
+  y.domain(newdata.sort(function(a,b){
+    return b.value - a.value;
+  })
+    .map(function(d) { return d.key; }));
+  var barmax = d3.max(newdata, function(e) {
+    return e.value;
+  });
+  x.domain([0,barmax]); 
+
+  var chartRow = svg.selectAll("g.chartRow")
+    .data(newdata, function(d){ return d.key});
+  var newRow = chartRow
+    .enter()
+    .append("g")
+    .attr("class", "chartRow")
+    .attr("transform", "translate(0," + height + margin.top + margin.bottom + ")");
+
+  newRow.insert("rect")
+    .attr("class","bar")
+    .attr("x", 0)
+    .attr("opacity",0)
+    .attr("height", y.rangeBand())
+    .attr("width", function(d) { return x(d.value);}) 
+
+  newRow.append("text")
+    .attr("class","label")
+    .attr("y", y.rangeBand()/2)
+    .attr("x",0)
+    .attr("opacity",0)
+    .attr("dy",".35em")
+    .attr("dx","0.5em")
+    .text(function(d){return d.value;}); 
+  
+  newRow.append("text")
+    .attr("class","category")
+    .attr("text-overflow","ellipsis")
+    .attr("y", y.rangeBand()/2)
+    .attr("x",categoryIndent)
+    .attr("opacity",0)
+    .attr("dy",".35em")
+    .attr("dx","0.5em")
+    .text(function(d){return d.key});
+
+  chartRow.select(".bar").transition()
+    .duration(300)
+    .attr("width", function(d) { return x(d.value);})
+    .attr("opacity",1);
+
+  chartRow.select(".label").transition()
+    .duration(300)
+    .attr("opacity",1)
+    .tween("text", function(d) { 
+    var i = d3.interpolate(+this.textContent.replace(/\,/g,''), +d.value);
+    return function(t) {
+      this.textContent = Math.round(i(t));
+    };
+    });
+
+  chartRow.select(".category").transition()
+    .duration(300)
+    .attr("opacity",1);
+
+  chartRow.exit().transition()
+    .style("opacity","0")
+    .attr("transform", "translate(0," + (height + margin.top + margin.bottom) + ")")
+    .remove();
+
+
+  var delay = function(d, i) { return 100 + i * 30; };
+
+  chartRow.transition()
+    .delay(delay)
+    .duration(200)
+    .attr("transform", function(d){ return "translate(0," + y(d.key) + ")"; });
+};
+
+
+
+var pullData = function(settings,callback){
+  data = {{shootingData |safe}}
+  newData = data
+  data.forEach(function(d,i) {
+    newData[i].value = Math.min(counter,d.value)
+  })
+  newData = formatData(newData)
+  callback(settings, newData)
+  counter++; 
+}
+
+var formatData = function(data){
+    return data.sort(function (a, b) {
+        return b.value - a.value;
+      })
+    .slice(0, 51);
+}
+
+var redraw = function(settings){
+  pullData(settings,redrawChart)
+}
+
+var settings = setup('#chart');
+redraw(settings)
+
+setInterval(function(){
+  redraw(settings)
+}, 150);
+
+  </script>
+</body>
+</center>

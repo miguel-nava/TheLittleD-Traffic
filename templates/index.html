@@ -1,0 +1,42 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/home.css') }}">
+<link href="https://fonts.googleapis.com/css?family=Abril+Fatface" rel="stylesheet">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+<div style="display:flex;position:fixed;top:0;left:0;width:100%;height:100%;flex-direction:column;align-items:center;justify-content:space-around">
+        <h1 style="width:100%">A look into <span style="color: #ff3f34">gun</span>
+            <span
+               class="txt-rotate"
+               data-period="2000"
+               data-rotate='[ "crimes.", "legislation.", "trends." ]'></span>
+          </h1>
+          <div class="hamburger-menu">
+                <div class="bar"></div>	
+            </div>
+            <div id = "navmenu"> 
+                    <div class="topnav">
+                            <a href="/heat">Heat Map</a>
+                            <a href="/scatter">Bubble</a>
+                            <a href="/shooting">Shootings</a>
+                            <a href="/bills">Bills</a>
+                            <a href="/reps">Representatives</a>
+                     </div>
+            
+            </div>
+</div>
+<center>
+
+
+
+ 
+
+
+
+
+
+<br/>
+
+
+
+  </center>
+
+<script  src="{{ url_for('static',filename='styles/home.js') }}"></script>

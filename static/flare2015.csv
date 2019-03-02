@@ -1,0 +1,58 @@
+id,death,value
+flare,
+flare.vstrict,
+flare.vstrict.California, 3, 7.7
+flare.vstrict.Delaware, 3,12.1 
+flare.vstrict.Illinois, 3, 9.5
+flare.vstrict.Pennsylvania, 4, 11.4
+flare.strict, 
+flare.strict.Connecticut, 9, 5.3
+flare.strict.Hawaii, 8, 3.6
+flare.strict.Iowa, 9, 7.8
+flare.strict.Massachusetts, 9, 3.0
+flare.strict.NorthCarolina, 10, 12.5
+flare.strict.Nebraska, 10, 8.9
+flare.strict.NewJersey, 9, 5.4
+flare.strict.NewYork, 10, 4.2
+flare.strict.Tennessee, 9, 16.0
+flare.strict.Washington, 7, 9.8
+flare.hard,
+flare.hard.Alaska, 15, 23.4
+flare.hard.Alabama, 14, 19.6
+flare.hard.Arkansas, 15, 16.9
+flare.hard.Arizona, 15, 13.8
+flare.hard.Colorado, 11, 12.6
+flare.hard.Kanas, 13, 11.4
+flare.hard.Maryland, 11, 11.9
+flare.hard.Maine, 15, 9.8
+flare.hard.Michigan, 11, 11.7
+flare.hard.Minnesota, 12, 7.4
+flare.hard.NorthDakota, 13, 12.3
+flare.hard.Ohio, 15, 11.9
+flare.hard.Oregon, 13, 11.4
+flare.hard.RhodeIsland, 11, 4.7
+flare.hard.SouthCarolina, 14, 17.3
+flare.hard.Utah, 11, 12.8
+flare.hard.Virginia, 12, 10.9
+flare.hard.Wisconsin, 13, 10.4
+flare.hard.WestVirginia, 11, 14.0
+flare.medium, 
+flare.medium.Georgia, 19, 14.1
+flare.medium.Florida, 19, 12.0
+flare.medium.Indiana, 17, 12.7
+flare.medium.Kentucky, 19, 15.2
+flare.medium.Louisiana, 19, 20.4
+flare.medium.Missouri, 19, 18.1
+flare.medium.Mississippi, 19, 19.6
+flare.medium.NewMexico, 19, 18.6
+flare.medium.Nevada, 17, 14.9
+flare.medium.Oklahoma, 19, 18.0
+flare.medium.SouthDakota, 19, 11.1
+flare.medium.Texas, 17, 11.7
+flare.easy,
+flare.easy.Idaho, 21, 14.7
+flare.easy.Montana, 21, 19.2
+flare.easy.NewHampshire, 21, 8.9
+flare.easy.Vermont, 21, 9.6
+flare.easy.Wyoming, 21, 19.6
+

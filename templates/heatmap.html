@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+<style>
+h1 {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Helvetica", "Arial", "Lucida Grande", "sans-serif";
+  font-size: 3em;
+  color: white;
+}
+body {
+  font-family: "Helvetica Neue", "Helvetica", "Arial", "sans-serif";
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: black;
+}
+.centered {
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Helvetica", "Arial", "Lucida Grande", "sans-serif";
+  font-size: 2em;
+  font-weight: 800;
+
+}
+/* stylesheet for your custom graph */
+
+.states {
+  fill: none;
+  stroke: #fff;
+  stroke-linejoin: round;
+}
+
+.states-choropleth {
+  fill: #ccc;
+}
+
+#tooltip-container {
+  position: absolute;
+  background-color: #fff;
+  color: #000;
+  padding: 10px;
+  border: 1px solid;
+  display: none;
+}
+
+.tooltip_key {
+  font-weight: bold;
+}
+
+.tooltip_value {
+  margin-left: 20px;
+  float: right;
+}
+
+.option-select {
+  margin-top: 20px;
+  margin-left: 40px;
+  fill: #64b646;
+  width: auto;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+
+}
+
+.centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+/* external css: flickity.css */
+
+* { box-sizing: border-box; }
+
+body { font-family: sans-serif; }
+
+.carousel {
+  background: black;
+}
+
+.carousel-cell {
+  width: 70%;
+  height: 200px;
+  /* flex-box, center image in cell */
+  display: -webkit-box;
+  display: -webkit-flex;
+  display:         flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+          justify-content: center;
+  -webkit-align-items: center;
+          align-items: center;
+}
+
+.carousel-cell img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  /* dim unselected */
+  opacity: 0.7;
+  -webkit-transform: scale(0.85);
+          transform: scale(0.85);
+  -webkit-filter: blur(5px);
+          filter: blur(5px);
+  -webkit-transition: opacity 0.3s, -webkit-transform 0.3s, transform 0.3s, -webkit-filter 0.3s, filter 0.3s;
+          transition: opacity 0.3s, transform 0.3s, filter 0.3s;
+}
+
+/* brighten selected image */
+.carousel-cell.is-selected img {
+  opacity: 1;
+  -webkit-transform: scale(1);
+          transform: scale(1);
+  -webkit-filter: none;
+          filter: none;
+}
+
+@media screen and ( min-width: 768px ) {
+  .carousel-cell {
+    height: 400px;
+  }
+}
+
+@media screen and ( min-width: 960px ) {
+  .carousel-cell {
+    width: 60%;
+  }
+}
+
+/* buttons, no circle */
+.flickity-prev-next-button {
+  width: 60px;
+  height: 60px;
+  background: transparent;
+  opacity: 0.6;
+}
+.flickity-prev-next-button:hover {
+  background: transparent;
+  opacity: 1;
+}
+/* arrow color */
+.flickity-prev-next-button .arrow {
+  fill: white;
+}
+.flickity-prev-next-button.no-svg {
+  color: white;
+}
+/* closer to edge */
+.flickity-prev-next-button.previous { left: 0; }
+.flickity-prev-next-button.next { right: 0; }
+/* hide disabled button */
+.flickity-prev-next-button:disabled {
+  display: none;
+}
+hr{
+  color: white;
+  background-color: white;
+  height: 5px;
+  width: 60%;
+}
+
+</style>
+<center>
+  <h1>Heat Map</h1>
+  <hr/>
+<div id="selectors"></div>
+<div id="tooltip-container"></div>
+<div id="canvas-svg"></div>
+<center>
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/1.1.0/topojson.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+var homicideData = []; 
+d3.csv("test.csv", function(err, data) {
+  //console.log(data)
+  var config = {"color1":"#d3e5ff","color2":"#08306B","defaultValue":"1991","state":"state"};
+  
+  var WIDTH = 800, HEIGHT = 500;
+
+  var COLOR_COUNTS = 9;
+  
+  var SCALE = 0.7;
+  
+  function Interpolate(start, end, steps, count) {
+      var s = start,
+          e = end,
+          final = s + (((e - s) / steps) * count);
+      return Math.floor(final);
+  }
+  
+  function Color(_r, _g, _b) {
+      var r, g, b;
+      var setColors = function(_r, _g, _b) {
+          r = _r;
+          g = _g;
+          b = _b;
+      };
+  
+      setColors(_r, _g, _b);
+      this.getColors = function() {
+          var colors = {
+              r: r,
+              g: g,
+              b: b
+          };
+          return colors;
+      };
+  }
+  
+  function hexToRgb(hex) {
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+      } : null;
+  }
+  
+  function valueFormat(d) {
+    if (d > 1000000000) {
+      return Math.round(d / 1000000000 * 10) / 10 + "B";
+    } else if (d > 1000000) {
+      return Math.round(d / 1000000 * 10) / 10 + "M";
+    } else if (d > 1000) {
+      return Math.round(d / 1000 * 10) / 10 + "K";
+    } else {
+      return d;
+    }
+  }
+  
+  var fields = Object.keys(data[0]);
+  var option_select = d3.select('#selectors').append("select")
+      .attr("class", "option-select", );
+  for (var i = 0; i < fields.length; i++) {
+    if (fields[i] !== config.state) {
+      var opt = option_select.append("option")
+        .attr("value", fields[i])
+        .text(fields[i]);
+      
+      if (fields[i] === config.defaultValue) {
+        opt.attr("selected", "true");
+      }
+    }
+  }
+  
+  var COLOR_FIRST = config.color1, COLOR_LAST = config.color2;
+  
+  var rgb = hexToRgb(COLOR_FIRST);
+  
+  var COLOR_START = new Color(rgb.r, rgb.g, rgb.b);
+  
+  rgb = hexToRgb(COLOR_LAST);
+  var COLOR_END = new Color(rgb.r, rgb.g, rgb.b);
+  
+  var width = WIDTH,
+      height = HEIGHT;
+  
+  var startColors = COLOR_START.getColors(),
+      endColors = COLOR_END.getColors();
+  
+  var colors = [];
+  
+  for (var i = 0; i < COLOR_COUNTS; i++) {
+    var r = Interpolate(startColors.r, endColors.r, COLOR_COUNTS, i);
+    var g = Interpolate(startColors.g, endColors.g, COLOR_COUNTS, i);
+    var b = Interpolate(startColors.b, endColors.b, COLOR_COUNTS, i);
+    colors.push(new Color(r, g, b));
+  }
+  
+  var quantize = d3.scale.quantize()
+      .domain([0, 1.0])
+      .range(d3.range(COLOR_COUNTS).map(function(i) { return i }));
+  
+  var path = d3.geo.path();
+  
+  var svg = d3.select("#canvas-svg").append("svg")
+      .attr("width", width)
+      .attr("height", height);
+  
+  d3.tsv("https://s3-us-west-2.amazonaws.com/vida-public/geo/us-state-names.tsv", function(error, names) {
+  d3.json("https://s3-us-west-2.amazonaws.com/vida-public/geo/us.json", function(error, us) {
+    
+    var name_id_map = {};
+    var id_name_map = {};
+    
+    for (var i = 0; i < names.length; i++) {
+      name_id_map[names[i].name] = names[i].id;
+      id_name_map[names[i].id] = names[i].name;
+    }
+
+    var dataMap = {};
+    data.forEach(function(d) {
+      if (!dataMap[d[config.state]]) {
+        dataMap[d[config.state]] = {};
+      }
+      
+      for (var i = 0; i < Object.keys(data[0]).length; i++) {
+        if (Object.keys(data[0])[i] !== config.state) {
+          dataMap[d[config.state]][Object.keys(data[0])[i]] =
+            +d[Object.keys(data[0])[i]];
+        }
+      }
+    });
+    //console.log(dataMap)
+    function drawMap(dataColumn) {
+      var valueById = d3.map();
+      data.forEach(function(d) {
+        var id = name_id_map[d[config.state]];
+        valueById.set(id, +d[dataColumn]); 
+      });
+      
+      quantize.domain([d3.min(data, function(d){ return +d[dataColumn] }),
+        d3.max(data, function(d){ return +d[dataColumn] })]);
+    
+      svg.append("g")
+          .attr("class", "states-choropleth")
+        .selectAll("path")
+          .data(topojson.feature(us, us.objects.states).features)
+        .enter().append("path")
+          .attr("transform", "scale(" + SCALE + ")")
+          .style("fill", function(d) {
+            if (valueById.get(d.id)) {
+              var i = quantize(valueById.get(d.id));
+              var color = colors[i].getColors();
+              return "rgb(" + color.r + "," + color.g +
+                  "," + color.b + ")";
+            } else {
+              return "";
+            }
+          })
+          .attr("d", path)
+          .on("mousemove", function(d) {
+              var html = "";
+    
+              html += "<div class=\"tooltip_kv\">";
+              html += "<span class=\"tooltip_key\">";
+              html += id_name_map[d.id];
+              html += "</span>";
+              html += "</div>";
+              
+              for (var i = 0; i < Object.keys(data[0]).length; i++) {
+                //console.log(dataColumn)
+                if (i + 1990 == dataColumn) {
+                  html += "<div class=\"tooltip_kv\">";
+                  html += "<span class='tooltip_key'>";
+                  html += "Score: ";
+                  html += "</span>";
+                  html += "<span class=\"tooltip_value\">";
+                  html += valueFormat(dataMap[id_name_map[d.id]][Object.keys(data[0])[i-1]]);
+                  html += "";
+                  html += "</span>";
+                  //html += homicide[id_name_map[d.id]][Object.keys[homicideData[0][i]]]
+                  html += "</div>";
+                }
+              }
+              
+              $("#tooltip-container").html(html);
+              $(this).attr("fill-opacity", "0.7");
+              $("#tooltip-container").show();
+              
+              var coordinates = d3.mouse(this);
+              
+              var map_width = $('.states-choropleth')[0].getBoundingClientRect().width;
+              
+              if (d3.event.layerX < map_width / 2) {
+                d3.select("#tooltip-container")
+                  .style("top", (d3.event.layerY + 15) + "px")
+                  .style("left", (d3.event.layerX + 15) + "px");
+              } else {
+                var tooltip_width = $("#tooltip-container").width();
+                d3.select("#tooltip-container")
+                  .style("top", (d3.event.layerY + 15) + "px")
+                  .style("left", (d3.event.layerX - tooltip_width - 30) + "px");
+              }
+          })
+          .on("mouseout", function() {
+                  $(this).attr("fill-opacity", "1.0");
+                  $("#tooltip-container").hide();
+              });
+    
+      svg.append("path")
+          .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
+          .attr("class", "states")
+          .attr("transform", "scale(" + SCALE + ")")
+          .attr("d", path);
+    }
+    
+    drawMap(config.defaultValue);
+    
+    option_select.on("change", function() {
+      drawMap($("#selectors").find(".option-select").val());
+    });
+  
+  
+  });
+  });
+});
+
+</script>
+
+<h1 style="color:white; margin-top:-50px;">Questions?</h1>
+<hr style="margin-bottom: 50px">
+
+<!-- Flickity HTML init -->
+<div class="carousel js-flickity">
+    <!-- images from unsplash.com -->
+    <div class="carousel-cell">
+      <img src="http://paintingandframe.com/uploadpic/andy_warhol/big/gun_c_1981_82.jpg" alt="orange tree" style="width:100%; filter: blur(3px);"/>
+      <div class="centered" style="color:white;">Does state law require criminal background checks for gun sales by unlicensed sellers?</div>
+    </div>
+    <div class="carousel-cell">
+      <img src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/1/buddhas-gun-joy-taylor.jpg" alt="submerged" style="width:100%; filter: blur(5px);" />
+      <div class="centered" style="color:white;">Do any exceptions apply to the background check requirement?</div>
+    </div>
+    <div class="carousel-cell">
+      <img src="https://ivn.us/wp-content/uploads/2015/12/gun-debate-500x315.jpg" alt="look-out"  style="width:100%; filter: blur(5px);"/>
+      <div class="centered" style="color:white;">Is a criminal background check required for the sale of all firearms, or only the sale of all handguns?</div>
+
+    </div>
+    <div class="carousel-cell">
+      <img src="https://sofrep.com/wp-content/uploads/2016/01/gun-baby-gun-gun-laws.jpg" alt="One World Trade"  style="width:100%; filter: blur(5px);"/>
+      <div class="centered" style="color:white;">Is any record of the sale required to be kept?</div>
+
+    </div>
+    <div class="carousel-cell">
+      <img src="http://31.media.tumblr.com/tumblr_m6l6hdLcf51ru7e0yo1_500.jpg" alt="drizzle"  style="width:100%; filter: blur(5px);"/>
+      <div class="centered" style="color:white;">Does state law generally prohibit all people convicted of felonies from having firearms?</div>
+
+    </div>
+    <div class="carousel-cell">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQVn4keAOHu9P4FoLVLHB_GRdosWkC7C2-B71PUV9sqUgfwQmeY" alt="cat nose" style="width:100%; filter: blur(5px);" />
+      <div class="centered" style="color:white;">Does state law prohibit any people from having firearms based on other criminal history?</div>
+
+    </div>
+    <div class="carousel-cell">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmRni1MTyuORJSIEm8xxtDpRsyGm6dFKIV8QuVakRk7xCx-Bh7" alt="contrail"  style="width:100%; filter: blur(5px);"/>
+      <div class="centered" style="color:white;">Does state law prohibit people who have been convicted of domestic violence misdemeanors from having firearms?</div>
+
+    </div>
+    <div class="carousel-cell">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4Pnp3s-_3OaLEsw-b1QTQEfnT-p1SH1oe_PoMQcJVbEhzTUgeTw" alt="golden hour"  style="width:100%; filter: blur(5px);"/>
+      <div class="centered" style="color:white;">Does state law prohibit any people convicted of drug-related misdemeanors from having firearms?</div>
+
+    </div>
+    <div class="carousel-cell">
+      <img src="https://images.fineartamerica.com/images/artworkimages/mediumlarge/1/uzi-sub-machine-gun-on-purple-michael-tompsett.jpg" alt="flight formation"  style="width:100%; filter: blur(5px);"/>
+      <div class="centered" style="color:white;">Does state law prohibit people who have been involuntarily committed to a psychiatric hospital from having firearms?</div>
+
+    </div>
+    <div class="carousel-cell">
+        <img src="http://assets.saatchiart.com/saatchi/321424/art/1676083/858472-7.jpg" alt="flight formation"  style="width:100%; filter: blur(5px);"/>
+        <div class="centered" style="color:white;">Does state law prohibit firearm possession by people who are found to be a danger to themselves or others?</div>
+  
+      </div>
+      <div class="carousel-cell">
+          <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSCDKaN_zzwDKewdPDMa7SnbIilQY65HIGYhfcqke1oCvIwMiXFCA" alt="flight formation"  style="width:100%; filter: blur(5px);"/>
+          <div class="centered" style="color:white;">Does state law prohibit people from having firearms because they are found incapable of managing their affairs due to mental illness?</div>
+    
+        </div>
+  </div>
+  

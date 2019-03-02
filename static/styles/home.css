@@ -1,0 +1,111 @@
+@import url('https://fonts.googleapis.com/css?family=Quicksand');
+html {
+  font-family: 'Raleway', sans-serif;
+  padding: 1em 2em;
+  font-size: 18px;
+  font-weight: bolder;
+  background: #000;
+}
+
+h1,h2 {
+  font-size:3em;
+  font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+  font-weight: 600;
+  font-weight: bolder;
+  margin: 0;
+  color: #FFF;
+  text-align: center;
+}
+h1 { font-size: 5.2em;}
+span {
+  color: #FFF
+}
+h2 {
+  color: #888;
+  font-size: 2em;
+}
+a {
+  font-size: 1.5em;
+}
+
+.hamburger-menu {
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+}
+
+.bar,
+.bar:after,
+.bar:before {
+  width: 100px;
+  height: 10px;
+  
+}
+
+.bar {
+  position: relative;
+  transform: translateY(25px);
+  background: white;
+  transition: all 0ms 300ms;
+}
+.bar.animate {
+  background: rgba(255, 255, 255, 0);
+  
+}
+
+.bar:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 25px;
+  background: white;
+  transition: bottom 300ms 300ms cubic-bezier(0.23, 1, 0.32, 1), transform 300ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.bar:after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 25px;
+  background: white;
+  transition: top 300ms 300ms cubic-bezier(0.23, 1, 0.32, 1), transform 300ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.bar.animate:after {
+  top: 0;
+  transform: rotate(45deg);
+  transition: top 300ms cubic-bezier(0.23, 1, 0.32, 1), transform 300ms 300ms cubic-bezier(0.23, 1, 0.32, 1);
+  background: #f44336;
+}
+
+.bar.animate:before {
+  bottom: 0;
+  transform: rotate(-45deg);
+  background:#f44336;
+  transition: bottom 300ms cubic-bezier(0.23, 1, 0.32, 1), transform 300ms 300ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+#navmenu{
+  color:white;
+  max-width: 80vw;
+  opacity: 0;
+  transition: 0.2s all ease-in-out;
+}
+
+#navmenu.hide-menu {
+  opacity: 1;
+}
+
+.topnav {
+  display: flex;
+}
+
+.topnav a {
+  font-family: 'Quicksand', sans-serif;
+  float: left;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 25px;
+  padding: 20px;
+}

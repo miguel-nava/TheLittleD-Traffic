@@ -1,0 +1,241 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,600,600italic,800,800italic");
+
+
+	html, body, div, span, h1, h2, h3, h4, h5, h6, p, a, article, header, section{
+		margin: 0;
+		padding: 0;
+		border: 0;
+		font-size: 100%;
+		font: inherit;
+		vertical-align: baseline;
+	}
+
+	article, header, section {
+		display: block;
+	}
+
+/* Basic */
+
+	@-ms-viewport {
+		width: device-width;
+	}
+
+	body {
+		background: #000;
+	}
+
+
+	body {
+		color:#000;
+		font-family: "Open Sans", Helvetica, sans-serif;
+		font-size: 15pt;
+		font-weight: 400;
+		letter-spacing: 0.075em;
+		line-height: 1.65em;
+	}
+
+		@media screen and (max-width: 1680px) {
+
+			body {
+				font-size: 13pt;
+			}
+
+		}
+
+		@media screen and (max-width: 1280px) {
+
+			body{
+				font-size: 12pt;
+			}
+
+		}
+
+		@media screen and (max-width: 736px) {
+
+			body{
+				font-size: 11pt;
+				letter-spacing: 0.0375em;
+			}
+
+		}
+
+
+	p {
+		margin: 0 0 2em 0;
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		color: #000;
+		font-weight: 800;
+		letter-spacing: 0.225em;
+		line-height: 1em;
+		margin: 0 0 1em 0;
+		text-transform: uppercase;
+	}
+
+		h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
+			color: inherit;
+			text-decoration: none;
+		}
+
+	h2 {
+		font-size: 1.35em;
+		line-height: 1.75em;
+	}
+
+		@media screen and (max-width: 736px) {
+
+			h2 {
+				font-size: 1.1em;
+				line-height: 1.65em;
+			}
+
+		}
+
+	h3 {
+		font-size: 1.15em;
+		line-height: 1.75em;
+	}
+
+		@media screen and (max-width: 736px) {
+
+			h3 {
+				font-size: 1em;
+				line-height: 1.65em;
+			}
+
+		}
+
+	h4 {
+		font-size: 1em;
+		line-height: 1.5em;
+	}
+
+
+	hr {
+		border: 0;
+		border-bottom: solid 2px #000;
+		margin: 3em 0;
+	}
+
+
+/* Wrapper */
+
+	.wrapper {
+		padding: 6em 0 4em 0 ;
+	}
+
+		.wrapper > .inner {
+			width: 60em;
+			margin: 0 auto;
+		}
+
+			@media screen and (max-width: 1280px) {
+
+				.wrapper > .inner {
+					width: 90%;
+				}
+
+			}
+
+			@media screen and (max-width: 980px) {
+
+				.wrapper > .inner {
+					width: 100%;
+				}
+
+			}
+		.wrapper.aboutus {
+			background-color: #0000;
+			color: #4E4852;
+		}
+
+			.wrapper.aboutus h2, .wrapper.aboutus h3, .wrapper.aboutus h4 {
+				color: #2E3842;
+			}
+
+			.wrapper.aboutus hr {
+				border-color: #000;
+			}
+
+			.wrapper.aboutus header p {
+				color: #8E8892;
+			}
+
+
+
+	
+
+	#main > header {
+        color: black;
+		padding: 5em 0 5em 0 ;
+		background-image: -moz-linear-gradient(top,#FFF		, #FFF);
+		background-image: -webkit-linear-gradient(top,#FFF 		, #FFF);
+		background-image: -ms-linear-gradient(top, #FFF	, #FFF);
+		background-image: linear-gradient(top, #FFF 	, #FFF);
+		background-attachment: fixed;
+		background-position: center center;
+		background-repeat: no-repeat;
+		background-size: cover;
+		text-align: center;
+	}
+
+		#main > header h2 {
+			font-size: 1.75em;
+			margin: 0 0 0.5em 0;
+		}
+
+		#main > header p {
+			color: inherit;
+			letter-spacing: 0.225em;
+			text-transform: uppercase;
+			top: 0;
+		}
+
+			#main > header p a {
+				color: inherit;
+			}
+
+		@media screen and (max-width: 1680px) {
+
+			#main > header {
+				padding: 10em 0 8em 0 ;
+			}
+
+		}
+
+		@media screen and (max-width: 1280px) {
+
+			#main > header {
+				padding: 8em 3em 6em 3em ;
+			}
+
+		}
+
+		@media screen and (max-width: 980px) {
+
+			#main > header {
+				padding: 10em 3em 8em 3em ;
+			}
+
+		}
+
+		@media screen and (max-width: 736px) {
+
+			#main > header {
+				padding: 5em 3em 3em 3em ;
+			}
+
+				#main > header h2 {
+					font-size: 1.25em;
+					margin: 0 0 1em 0;
+				}
+
+		}
+
+	body.is-mobile #main > header {
+		background-attachment: scroll;
+	}
+
+	.grid-item { width: 25%; }
+.grid-item--width2 { width: 50%; }

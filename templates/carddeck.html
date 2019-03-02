@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <link rel= "stylesheet" type="text/css" href="{{ url_for('static',filename='styles/cards.css') }}">
+    <script src="https://unpkg.com/packery@2/dist/packery.pkgd.js"></script>
+    <script  src="{{ url_for('static',filename='styles/cards.js') }}"></script>
+    
+
+</head>
+<body>
+    <div id="main" >
+        <header style="padding: 20px; margin-bottom:25px;" >
+  <h2 style="color:black">Bills</h2>
+  <p>Trending Bills Regarding Firearms</p>
+</header>
+<div class="grid" style="margin-left:100px" data-packery='{ "itemSelector": ".grid-item", "gutter": 100 }'>
+
+    {% set index = 0 %}
+    {% for result in results %} 
+    <div class="grid-item">
+  <div class="card" style="width: 20rem;">
+    <img class="card-img-top" src={{pics[loop.index0]}} alt="Card image cap">
+
+    {%  set index = index  + 1 %}
+
+    <div class="card-body" style:"margin-top:15px">
+
+      <h5 class="card-title" style="text-align: center;">{{result.short_title}}</h5>
+      <hr>
+      <center>
+        <h7 class="card-title">- {{result.sponsor_name}}</h7>
+    
+
+    </center>
+      <hr>
+      {% if result.summary_short is none %}
+      <p class="card-text">{{result.summary_short}}</p>
+      {% else %}
+      <p class="card-text">{{result.title}}</p>
+      {% endif %}
+
+    </div>
+    <div class="card-footer">
+      <center>
+      <small class="text-muted">{{result.latest_major_action_date}}  <br><a href={{result.govtrack_url}} target="_blank">Track Bill</a> <br><a href={{result.congressdotgov_url}} target="_blank">Read More</a></small>
+    </center>
+    </div>
+  </div>
+</div>
+  {% endfor %}
+
+</div>
+
+</center>
+</body>
+</html>
