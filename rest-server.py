@@ -31,7 +31,9 @@ DB_NAME = 'opendata'
 
 con = pymysql.connect(host="", user=USERNAME, password=PASSWORD, db=DB_NAME, cursorclass=pymysql.cursors.
                                    DictCursor)
-cur = con.cursor()
+
+add_log = "INSERT INTO contactpeeps(phonenumber, fname) VALUES (%s,%s)"
+get_data = "SELECT * FROM contactpeeps"
 
 @app.route('/', methods=['GET'])
 def getHome():
@@ -44,16 +46,27 @@ def miguel():
 
 @app.route('/tapas')
 def tapas():
+    cur = con.cursor()
     cur.execute("SELECT phonenumber, fname FROM contactpeeps LIMIT 50")
     result = cur.fetchall()
+    cur.close()
     print(result)
     return "result"
 
 @app.route('/kyle')
 def kyle():
     numbers_dict = defaultdict(lambda: "")
-    numbers_dict["14048191425"] = "Tapas Kapadia"
+    #numbers_dict["14048191425"] = "Tapas Kapadia"
     message_string = "you suck ill eat ur pea brain"
+    cur = con.cursor()
+    cur.execute(get_data)
+    results = cur.fetchall()
+    cur.close()
+    #print(results)
+    fr = results[0]
+    for item in results:
+        numbers_dict[item["phonenumber"]] = item["fname"]
+    print(numbers_dict)
     notify_events(numbers_dict, message_string)
     return 'sent'
 
@@ -79,8 +92,8 @@ def notify_events(numbers, message):
         response = client.messages.create(
             to= number, 
             from_= "+17176198944",
-            body= sms_string,
-            media_url= media_url # if you need to attach multimedia to your message, else remove this parameter.
+            body= sms_string
+            #media_url= media_url # if you need to attach multimedia to your message, else remove this parameter.
         )
         print(response.sid)
         
@@ -238,13 +251,17 @@ def getShootings():
     print(shootingData)
     return render_template('updatingbarchart.html', shootingData=shootingData)
 
-@app.route('/reps', methods=['GET', 'POST'])
+@app.route('/join', methods=['GET', 'POST'])
 def getRepresentativeInformation(): 
     if request.method == 'POST': 
         pnumber = request.form['pnumber'] 
         fname = request.form['fname'] 
-        print(pnumber,fname)
-        return render_template('representatives.html')
+        print(fname,pnumber)
+        cur = con.cursor()
+        cur.execute(add_log,(pnumber,fname))
+        con.commit()
+        cur.close()
+        return render_template('yay.html')
     else: 
         return render_template('representatives.html') 
 
